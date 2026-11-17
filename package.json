@@ -1,0 +1,13 @@
+{
+  "name": "termo-entrega",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Termo de Entrega: termo de entrega e responsabilidade dos camarins e salas de produção da Farmasi Arena, assinado pelo cliente na tela",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node tests/api.test.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

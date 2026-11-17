@@ -1,0 +1,333 @@
+{
+ "origem": "TERMO DE RESPONSABILIDADE CAMARIM E SALAS DE PRODUÇÃO 2026.doc",
+ "taxa": "R$ 2.000,00",
+ "salas": [
+  {
+   "id": "C1",
+   "g": "C",
+   "nome": "Camarim 1",
+   "itens": [
+    {
+     "n": "Sofá de 3 lugares cinza camurça",
+     "q": 3
+    },
+    {
+     "n": "Mesinha de centro preta",
+     "q": 1
+    },
+    {
+     "n": "Espelho moldura madeira",
+     "q": 1
+    },
+    {
+     "n": "Arara",
+     "q": 1
+    },
+    {
+     "n": "Espelho moldura branca (localizado no banheiro)",
+     "q": 1
+    },
+    {
+     "n": "Lixeira inox",
+     "q": 2
+    },
+    {
+     "n": "Banqueta",
+     "q": 4
+    },
+    {
+     "n": "Mesa bistrô",
+     "q": 1
+    }
+   ]
+  },
+  {
+   "id": "C2",
+   "g": "C",
+   "nome": "Camarim 2",
+   "itens": [
+    {
+     "n": "Lixeira inox",
+     "q": 1
+    },
+    {
+     "n": "Sofá de 2 lugares preto",
+     "q": 1
+    },
+    {
+     "n": "Banqueta",
+     "q": 8
+    },
+    {
+     "n": "Mesa bistrô",
+     "q": 2
+    }
+   ]
+  },
+  {
+   "id": "C3",
+   "g": "C",
+   "nome": "Camarim 3",
+   "itens": [
+    {
+     "n": "Sofá de 3 lugares preto",
+     "q": 1
+    },
+    {
+     "n": "Sofá de 2 lugares preto",
+     "q": 2
+    },
+    {
+     "n": "Espelho moldura madeira",
+     "q": 1
+    },
+    {
+     "n": "Arara",
+     "q": 1
+    },
+    {
+     "n": "Lixeira inox",
+     "q": 1
+    },
+    {
+     "n": "Banqueta",
+     "q": 6
+    },
+    {
+     "n": "Mesa bistrô",
+     "q": 2
+    }
+   ]
+  },
+  {
+   "id": "C4",
+   "g": "C",
+   "nome": "Camarim 4",
+   "itens": [
+    {
+     "n": "Sofá de 2 lugares camurça cinza",
+     "q": 3
+    },
+    {
+     "n": "Espelho moldura madeira",
+     "q": 1
+    },
+    {
+     "n": "Arara",
+     "q": 1
+    },
+    {
+     "n": "Lixeira inox",
+     "q": 1
+    },
+    {
+     "n": "Banqueta",
+     "q": 6
+    },
+    {
+     "n": "Mesa bistrô",
+     "q": 2
+    }
+   ]
+  },
+  {
+   "id": "C5",
+   "g": "C",
+   "nome": "Camarim 5",
+   "itens": [
+    {
+     "n": "Lixeira inox",
+     "q": 1
+    },
+    {
+     "n": "Banqueta",
+     "q": 6
+    },
+    {
+     "n": "Mesa bistrô",
+     "q": 2
+    }
+   ]
+  },
+  {
+   "id": "C6",
+   "g": "C",
+   "nome": "Camarim 6",
+   "itens": [
+    {
+     "n": "Sofá de 3 lugares cinza camurça",
+     "q": 3
+    },
+    {
+     "n": "Mesinha de centro preta",
+     "q": 1
+    },
+    {
+     "n": "Espelho moldura madeira",
+     "q": 1
+    },
+    {
+     "n": "Arara",
+     "q": 1
+    },
+    {
+     "n": "Espelho moldura branca (localizado no banheiro)",
+     "q": 1
+    },
+    {
+     "n": "Lixeira inox",
+     "q": 2
+    },
+    {
+     "n": "Banqueta",
+     "q": 4
+    },
+    {
+     "n": "Mesa bistrô",
+     "q": 1
+    }
+   ]
+  },
+  {
+   "id": "T06",
+   "g": "T",
+   "nome": "Sala T-06",
+   "itens": [
+    {
+     "n": "Mesa pranchão branca",
+     "q": 2
+    },
+    {
+     "n": "Cadeira azul de ferro",
+     "q": 8
+    }
+   ]
+  },
+  {
+   "id": "T07",
+   "g": "T",
+   "nome": "Sala T-07",
+   "itens": [
+    {
+     "n": "Cadeira azul de ferro",
+     "q": 4
+    },
+    {
+     "n": "Mesa pranchão branca",
+     "q": 1
+    }
+   ]
+  },
+  {
+   "id": "T08",
+   "g": "T",
+   "nome": "Sala T-08",
+   "itens": [
+    {
+     "n": "Cadeira azul de ferro",
+     "q": 10
+    },
+    {
+     "n": "Mesa pranchão branca",
+     "q": 3
+    }
+   ]
+  },
+  {
+   "id": "T51",
+   "g": "T",
+   "nome": "Sala T-51",
+   "itens": [
+    {
+     "n": "Aparador marrom",
+     "q": 1
+    },
+    {
+     "n": "Cadeira azul",
+     "q": 4
+    },
+    {
+     "n": "Mesa pranchão branca",
+     "q": 1
+    }
+   ]
+  },
+  {
+   "id": "T52",
+   "g": "T",
+   "nome": "Sala T-52",
+   "itens": [
+    {
+     "n": "Pranchão branco",
+     "q": 2
+    },
+    {
+     "n": "Poltrona preta",
+     "q": 2
+    },
+    {
+     "n": "Sofá de 2 lugares preto",
+     "q": 1
+    },
+    {
+     "n": "Armário pequeno marrom",
+     "q": 1
+    }
+   ]
+  },
+  {
+   "id": "T53",
+   "g": "T",
+   "nome": "Sala T-53",
+   "itens": [
+    {
+     "n": "Pranchão branco",
+     "q": 1
+    },
+    {
+     "n": "Cadeira azul",
+     "q": 6
+    },
+    {
+     "n": "Sofá de 2 lugares preto",
+     "q": 1
+    }
+   ]
+  },
+  {
+   "id": "T54",
+   "g": "T",
+   "nome": "Sala T-54",
+   "itens": [
+    {
+     "n": "Pranchão marrom",
+     "q": 1
+    },
+    {
+     "n": "Pranchão branco",
+     "q": 1
+    },
+    {
+     "n": "Cadeira azul",
+     "q": 6
+    },
+    {
+     "n": "Poltrona preta",
+     "q": 1
+    },
+    {
+     "n": "Sofá de 2 lugares preto",
+     "q": 1
+    },
+    {
+     "n": "Sofá de 3 lugares preto",
+     "q": 1
+    },
+    {
+     "n": "Armário pequeno marrom",
+     "q": 1
+    }
+   ]
+  }
+ ]
+}
