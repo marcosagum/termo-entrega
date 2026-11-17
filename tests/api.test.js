@@ -32,7 +32,12 @@ const PNG = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJA
     // equipe preenche
     t.campos = { ...t.campos, evento: 'Show Teste', resp: 'Fulana', doc: '123' };
     t.salas.C1.on = true; t.salas.C1.it[0].q = 2; t.salas.C1.it.push({ n: 'Frigobar', q: 1, p: null });
-    assert.strictEqual((await r('PUT', '/api/termos/' + t.id, { campos: t.campos, salas: t.salas })).s, 200);
+    assert.strictEqual(Object.keys(t.chaves).length, 15, 'lista de chaves do termo de chaves e controles');
+    assert.strictEqual(t.chaves.AR.q, 2);
+    t.chaves.C1.on = true; t.chaves.AR.on = true;
+    assert.strictEqual((await r('PUT', '/api/termos/' + t.id, { chaves: { ...t.chaves, AR: { ...t.chaves.AR, q: 0 } } })).s, 400, 'quantidade zero');
+    assert.strictEqual((await r('PUT', '/api/termos/' + t.id, { campos: t.campos, salas: t.salas, chaves: t.chaves })).s, 200);
+    assert.strictEqual((await r('POST', `/api/termos/${t.id}/devolucao`, { itens: { C1: 1, AR: 2 }, nome: 'X', img: PNG })).s, 409, 'devolução antes da assinatura');
     assert.strictEqual((await r('PUT', '/api/termos/' + t.id, { campos: { hack: 1 } })).s, 400, 'campo estranho');
     const f = await r('POST', `/api/termos/${t.id}/fotos/C1`, { img: JPG });
     assert.strictEqual(f.s, 200);
@@ -43,6 +48,7 @@ const PNG = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJA
     pub = (await r('GET', '/api/publico/' + t.chave, null, '')).j;
     assert.deepStrictEqual(pub.faltando, []);
     assert.deepStrictEqual(Object.keys(pub.salas), ['C1'], 'cliente só vê as salas entregues');
+    assert.deepStrictEqual(Object.keys(pub.chaves), ['C1', 'AR'], 'cliente só vê as chaves entregues');
     assert.strictEqual((await r('GET', `/api/publico/${t.chave}/fotos/${f.j.nome}`, null, '')).s, 200);
     assert.strictEqual((await r('GET', '/api/publico/chaveerradaxxxxxxxx', null, '')).s, 404);
     assert.strictEqual((await r('POST', `/api/publico/${t.chave}/assinar`, { aceite: false, img: PNG, numero: t.numero, versao: pub.versao }, '')).s, 400, 'sem aceite');
@@ -57,6 +63,23 @@ const PNG = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJA
     const full = (await r('GET', '/api/termos/' + t.id, null, equipe)).j;
     assert.strictEqual(full.assinatura.confere, true, 'código confere');
     assert.ok(full.assinatura.ip !== undefined);
+    // devolução das chaves e controles
+    const D = '/api/termos/' + t.id + '/devolucao';
+    assert.strictEqual((await r('POST', D, { itens: { C1: 1, AR: 2 }, nome: 'Fulana', img: PNG }, '')).s, 401, 'devolução pede senha');
+    assert.strictEqual((await r('POST', D, { itens: { C1: 1, AR: 3 }, nome: 'Fulana', img: PNG }, equipe)).s, 400, 'devolve mais do que recebeu');
+    assert.strictEqual((await r('POST', D, { itens: { C1: 1 }, nome: 'Fulana', img: PNG }, equipe)).s, 400, 'falta item na contagem');
+    assert.strictEqual((await r('POST', D, { itens: { C1: 1, AR: 1 }, nome: '', img: PNG }, equipe)).s, 400, 'sem nome');
+    assert.strictEqual((await r('POST', D, { itens: { C1: 1, AR: 1 }, nome: 'Fulana' }, equipe)).s, 400, 'sem assinatura');
+    const dv = await r('POST', D, { itens: { C1: 1, AR: 1 }, nome: 'Fulana', doc: '123', recebeu: 'Marcos', img: PNG }, equipe);
+    assert.strictEqual(dv.s, 200);
+    assert.strictEqual(dv.j.devolucao.confere, true, 'código da devolução confere');
+    assert.strictEqual(dv.j.assinatura.confere, true, 'devolução não mexe na assinatura da entrega');
+    assert.strictEqual((await r('POST', D, { itens: { C1: 1, AR: 2 }, nome: 'Fulana', img: PNG }, equipe)).s, 409, 'não devolve duas vezes');
+    const lst = (await r('GET', '/api/termos', null, equipe)).j.find(x => x.id === t.id);
+    assert.strictEqual(lst.faltou, 1, 'lista mostra a falta');
+    pub = (await r('GET', '/api/publico/' + t.chave, null, '')).j;
+    assert.strictEqual(pub.devolucao.itens.find(x => x.id === 'AR').dev, 1, 'cliente vê a devolução');
+    assert.strictEqual(pub.devolucao.ip, undefined);
     // apagar: equipe não pode, admin pode
     assert.strictEqual((await r('DELETE', '/api/termos/' + t.id, null, equipe)).s, 403);
     await r('POST', '/api/entrar', { senha: 'admin' });

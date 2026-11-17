@@ -329,5 +329,98 @@
     }
    ]
   }
+ ],
+ "origemChaves": "Termo de entrega de chaves e controles..doc",
+ "chaves": [
+  {
+   "id": "C1",
+   "nome": "Chave do Camarim 1",
+   "tipo": "chave",
+   "q": 1
+  },
+  {
+   "id": "C2",
+   "nome": "Chave do Camarim 2",
+   "tipo": "chave",
+   "q": 1
+  },
+  {
+   "id": "C3",
+   "nome": "Chave do Camarim 3",
+   "tipo": "chave",
+   "q": 1
+  },
+  {
+   "id": "C4",
+   "nome": "Chave do Camarim 4",
+   "tipo": "chave",
+   "q": 1
+  },
+  {
+   "id": "C5",
+   "nome": "Chave do Camarim 5",
+   "tipo": "chave",
+   "q": 1
+  },
+  {
+   "id": "C6",
+   "nome": "Chave do Camarim 6",
+   "tipo": "chave",
+   "q": 1
+  },
+  {
+   "id": "T51",
+   "nome": "Chave da Sala T-51",
+   "tipo": "chave",
+   "q": 1
+  },
+  {
+   "id": "T52",
+   "nome": "Chave da Sala T-52",
+   "tipo": "chave",
+   "q": 1
+  },
+  {
+   "id": "T53",
+   "nome": "Chave da Sala T-53",
+   "tipo": "chave",
+   "q": 1
+  },
+  {
+   "id": "T54",
+   "nome": "Chave da Sala T-54",
+   "tipo": "chave",
+   "q": 1
+  },
+  {
+   "id": "T06",
+   "nome": "Chave da Sala T-06",
+   "tipo": "chave",
+   "q": 1
+  },
+  {
+   "id": "T07",
+   "nome": "Chave da Sala T-07",
+   "tipo": "chave",
+   "q": 1
+  },
+  {
+   "id": "T08",
+   "nome": "Chave da Sala T-08",
+   "tipo": "chave",
+   "q": 1
+  },
+  {
+   "id": "S112",
+   "nome": "Chave da Sala 112/113",
+   "tipo": "chave",
+   "q": 1
+  },
+  {
+   "id": "AR",
+   "nome": "Controle do ar-condicionado",
+   "tipo": "controle",
+   "q": 2
+  }
  ]
 }

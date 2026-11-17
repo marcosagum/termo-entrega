@@ -140,6 +140,20 @@ button.stat:hover{border-color:var(--brand-light)}
 .ibtn{display:inline-grid;place-items:center;width:44px;height:44px;border-radius:50%;border:1px solid var(--ghost);background:#fff;flex:none}
 .ibtn:hover{border-color:var(--brand-light);color:var(--brand)}
 
+/* chaves e controles */
+.krow{display:flex;align-items:center;gap:10px;padding:6px 0;border-top:1px solid var(--line);min-height:52px}
+.krow:first-of-type{border-top:0}
+.kbt{flex:1;min-width:0;display:flex;align-items:center;gap:12px;border:0;background:transparent;text-align:left;padding:6px 0}
+.kbt .ck{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--ghost);display:grid;place-items:center;color:transparent;flex:none}
+.kbt .ck svg{width:16px;height:16px;stroke-width:2.5}
+.kbt[aria-pressed=true] .ck{background:var(--brand);border-color:var(--brand);color:#fff}
+.kbt[aria-pressed=false] .nm{color:var(--muted)}
+.kq{color:var(--muted);font-size:13px;white-space:nowrap}
+.dev-falta{color:var(--brand);font-weight:600}
+.warnbox{background:var(--note-bg);color:var(--brand-deep);border-radius:var(--r-card);padding:18px 20px;margin-bottom:14px}
+.warnbox h3{color:var(--brand-deep);margin:0 0 6px;display:flex;align-items:center;gap:8px;font-size:17px}
+.warnbox p{margin:0 0 4px}
+
 /* fotos */
 .phgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin-top:12px}
 .thumb{position:relative;aspect-ratio:4/3;border-radius:12px;overflow:hidden;background:var(--chip);padding:0;border:0}
@@ -245,15 +259,15 @@ button.stat:hover{border-color:var(--brand-light)}
   .pr-band .t{font-size:13pt;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
   .pr-band .s{font-size:9pt;opacity:.85}
   .pr-band .no{margin-left:auto;text-align:right;font-size:9pt}
-  .pr-dados{display:grid;grid-template-columns:1fr 1fr;gap:4px 18px;margin:12px 0 4px;font-size:10pt}
+  .pr-dados{display:grid;grid-template-columns:1fr 1fr;gap:2px 18px;margin:10px 0 2px;font-size:10pt}
   .pr-dados div{border-bottom:1px solid #e6e8ec;padding:4px 0}
   .pr-dados span{color:#717784;font-size:8.5pt;display:block}
-  .pr-cl h4{font-size:10.5pt;margin:12px 0 4px;color:#a10f12}
-  .pr-cl p{margin:0 0 5px;font-size:10pt;text-align:justify}
-  .pr-local{margin:14px 0 6px;font-size:10pt}
+  .pr-cl h4{font-size:10.5pt;margin:9px 0 3px;color:#a10f12}
+  .pr-cl p{margin:0 0 4px;font-size:9.6pt;text-align:justify}
+  .pr-local{margin:10px 0 4px;font-size:10pt}
   .pr-sigs{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:8px;break-inside:avoid}
-  .pr-sig img{height:70px;max-width:100%;display:block;margin:0 auto}
-  .pr-sig .vz{height:70px}
+  .pr-sig img{height:62px;max-width:100%;display:block;margin:0 auto}
+  .pr-sig .vz{height:62px}
   .pr-sig .l{border-top:1px solid #0a0a0a;padding-top:4px;font-size:9pt;text-align:center}
   .pr-sig .l b{display:block;font-size:10pt}
   .pr-reg{margin-top:12px;font-size:8.5pt;color:#555;border:1px solid #e6e8ec;border-radius:8px;padding:8px 10px;break-inside:avoid}
@@ -307,6 +321,7 @@ var IC={
   clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',search:'<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>',
   out:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>',
   shield:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/>',
+  key:'<circle cx="7.5" cy="15.5" r="4.5"/><path d="m10.7 12.3 9.8-9.8M17 6l3 3M14.5 8.5l2 2"/>',
   copy:'<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>'
 };
 function api(met,url,corpo){
@@ -324,6 +339,11 @@ function pecasSala(s){return s.it.reduce(function(a,x){return a+(+x.q||0);},0);}
 function salasOn(t){return Object.keys(t.salas).filter(function(id){return t.salas[id].on;}).map(function(id){return {id:id,s:t.salas[id]};});}
 function nFotos(t){return Object.keys(t.fotos||{}).reduce(function(a,k){return a+(t.salas[k]&&t.salas[k].on?t.fotos[k].length:0);},0);}
 function curto(nome){return nome.replace('Sala ','');}
+function chavesOn(t){var c=t.chaves||{};return Object.keys(c).filter(function(id){return c[id].on;}).map(function(id){return {id:id,k:c[id]};});}
+function qtdChave(k){return k.q+' '+(k.tipo==='controle'?(k.q===1?'controle':'controles'):(k.q===1?'chave':'chaves'));}
+function nomeQtd(k){return k.q>1?k.q+' '+k.nome.replace(/^Controle/,'controles').replace(/^Chave/,'chaves'):k.nome;}
+function faltasDev(d){return d?d.itens.filter(function(x){return x.dev<x.q;}):[];}
+function faltaTxt(x){var n=x.q-x.dev;return n+'x '+x.nome;}
 
 /* ================= texto do termo (tela e PDF) ================= */
 function clausulas(t,tela){
@@ -336,19 +356,25 @@ function clausulas(t,tela){
     '<p>Ao término do evento, os camarins e as salas de produção devem ser devolvidos exatamente como foram entregues, com todos os itens no devido lugar e em perfeito estado de conservação.</p>'+
     '<p>O responsável pelo evento deve comunicar qualquer dano ou extravio de itens antes da devolução oficial.</p>'+
     '<'+h+'>3. '+(tela?'RESPONSABILIDADE E COBRANÇA':'Responsabilidade e cobrança')+'</'+h+'>'+
-    '<p>Os camarins e as salas de produção devem ser devolvidos nas mesmas condições em que foram entregues, com todos os itens no devido lugar e em perfeito estado. Caso haja itens faltantes ou fora de seu local original, será cobrada uma taxa de '+(tela?'<span class="tx">'+esc(taxa)+'</span>':'<b>'+esc(taxa)+'</b>')+' referente ao custo de reorganização dos espaços. Para itens danificados, será cobrado o valor correspondente ao custo de reposição atual do item.</p>';
+    '<p>Os camarins e as salas de produção devem ser devolvidos nas mesmas condições em que foram entregues, com todos os itens no devido lugar e em perfeito estado. Caso haja itens faltantes ou fora de seu local original, será cobrada uma taxa de '+(tela?'<span class="tx">'+esc(taxa)+'</span>':'<b>'+esc(taxa)+'</b>')+' referente ao custo de reorganização dos espaços. Para itens danificados, será cobrado o valor correspondente ao custo de reposição atual do item.</p>'+
+    (chavesOn(t).length?
+    '<'+h+'>4. '+(tela?'CHAVES E CONTROLES':'Chaves e controles')+'</'+h+'>'+
+    '<p>O responsável pelo evento recebe da Farmasi Arena as chaves e os controles listados neste termo, a serem utilizados para o evento.</p>'+
+    '<p>Ao final do período de desmontagem do evento, os itens deverão ser devolvidos aos produtores da Farmasi Arena. Em caso de perda, o solicitante arcará com os custos de chaves ou controles perdidos.</p>':'');
 }
-function aceiteTexto(t){return 'Li e concordo com este termo, inclusive com a taxa de '+(t.taxa||'R$ 2.000,00')+' de reorganização e a cobrança do custo de reposição de itens danificados.';}
+function aceiteTexto(t){return 'Li e concordo com este termo, inclusive com a taxa de '+(t.taxa||'R$ 2.000,00')+' de reorganização e a cobrança do custo de reposição de itens danificados'+(chavesOn(t).length?', e com a devolução das chaves e dos controles ao fim da desmontagem, arcando com o custo dos que forem perdidos':'')+'.';}
+function listaChaves(t){return chavesOn(t).map(function(x){return nomeQtd(x.k);}).join(', ');}
 
 /* ================= PDF ================= */
 function imprimir(t,fotoSrc){
-  var c=t.campos,L=salasOn(t),tot=L.reduce(function(a,x){return a+pecasSala(x.s);},0),nf=nFotos(t),as=t.assinatura;
+  var c=t.campos,L=salasOn(t),tot=L.reduce(function(a,x){return a+pecasSala(x.s);},0),nf=nFotos(t),as=t.assinatura,CH=chavesOn(t),dv=t.devolucao;
   function band(sub){return '<div class="pr-band"><img src="'+LOGO+'" alt=""><div><div class="t">Termo de Entrega e Responsabilidade</div><div class="s">'+sub+'</div></div><div class="no">Nº '+esc(t.numero)+'<br>'+esc(c.evento||'')+'</div></div>';}
   function campo(r,v){return '<div><span>'+r+'</span>'+(esc(v)||'—')+'</div>';}
-  var h=band('Camarins e salas de produção · Farmasi Arena')+
+  var h=band(CH.length?'Camarins, salas de produção, chaves e controles · Farmasi Arena':'Camarins e salas de produção · Farmasi Arena')+
     '<div class="pr-dados">'+campo('Evento',c.evento)+campo('Data do evento',dataCurta(c.dataEvento))+campo('Responsável pelo evento',c.resp)+campo('Documento',c.doc)+campo('Empresa / produtora',c.empresa)+campo('Contato',[c.tel,c.email].filter(Boolean).join(' · '))+'</div>'+
     '<div class="pr-cl">'+clausulas(t,false)+
-    '<h4>Salas entregues</h4><p>'+L.map(function(x){return esc(x.s.nome);}).join(', ')+', com '+tot+' peças no total, conforme a relação de mobiliário e as fotos anexas.</p></div>'+
+    '<h4>Salas entregues</h4><p>'+L.map(function(x){return esc(x.s.nome);}).join(', ')+', com '+tot+' peças no total, conforme a relação de mobiliário e as fotos anexas.</p>'+
+    (CH.length?'<h4>Chaves e controles entregues</h4><p>'+esc(listaChaves(t))+'.</p>':'')+'</div>'+
     '<div class="pr-local">Rio de Janeiro, '+esc(dataExt(c.dataTermo))+'</div>'+
     '<div class="pr-sigs">'+
       '<div class="pr-sig">'+(as?'<img src="'+as.img+'" alt="">':'<div class="vz"></div>')+'<div class="l"><b>'+esc(c.resp)+'</b>Responsável pelo evento · Documento: '+esc(c.doc)+'</div></div>'+
@@ -356,6 +382,24 @@ function imprimir(t,fotoSrc){
     '</div>'+
     (as?'<div class="pr-reg">Assinado eletronicamente em '+esc(hora(as.em))+' (horário de Brasília). Ao assinar, o responsável pelo evento declarou: "'+esc(aceiteTexto(t))+'" Anexos: relação de mobiliário ('+L.length+' salas, '+tot+' peças) e '+nf+' foto'+(nf===1?'':'s')+' da entrega.<br>Código de conferência: <code>'+esc(as.codigo)+'</code></div>'
        :'<div class="pr-reg">Termo ainda não assinado.</div>');
+  if(CH.length){
+    var fd=faltasDev(dv);
+    h+='<div class="pb">'+band('Devolução das chaves e controles')+
+      '<div class="pr-h">Devolução das chaves e controles'+(dv?'':' · pendente')+'</div>'+
+      '<div class="pr-sala" style="break-inside:auto"><table><tr><td><b>Item</b></td><td style="text-align:right;width:80px"><b>Entregue</b></td><td><b>Devolvido</b></td></tr>'+
+      (dv?dv.itens:CH.map(function(x){return {nome:x.k.nome,q:x.k.q,dev:null};})).map(function(x){
+        var f=x.dev!=null&&x.dev<x.q;
+        return '<tr><td>'+esc(x.nome)+(f?' <span class="alt" style="color:#a10f12">(faltou '+(x.q-x.dev)+')</span>':'')+'</td><td style="text-align:right;width:80px;font-weight:600">'+x.q+'</td><td>'+(x.dev==null?'&nbsp;':x.dev)+'</td></tr>';
+      }).join('')+'</table></div>'+
+      (dv?'<p style="font-size:10pt;margin:8px 0">'+(fd.length?'<b style="color:#a10f12">Não devolvido: '+esc(fd.map(faltaTxt).join(', '))+'.</b> Conforme a cláusula 4, o solicitante arcará com o custo dos itens perdidos.':'Todos os itens foram devolvidos.')+'</p>':
+        '<p style="font-size:10pt;margin:8px 0">Ao final da desmontagem, os itens devem ser devolvidos aos produtores da Farmasi Arena.</p>')+
+      '<div class="pr-sigs">'+
+        '<div class="pr-sig">'+(dv?'<img src="'+dv.img+'" alt="">':'<div class="vz"></div>')+'<div class="l"><b>'+(dv?esc(dv.nome):'&nbsp;')+'</b>Devolvido por'+(dv&&dv.doc?' · Documento: '+esc(dv.doc):' · Nome legível e CPF')+'</div></div>'+
+        '<div class="pr-sig"><div class="vz"></div><div class="l"><b>'+(dv&&dv.recebeu?esc(dv.recebeu):'&nbsp;')+'</b>Recebido por · Farmasi Arena</div></div>'+
+      '</div>'+
+      (dv?'<div class="pr-reg">Devolução registrada em '+esc(hora(dv.em))+' (horário de Brasília), ligada ao termo nº '+esc(t.numero)+'.<br>Código de conferência da devolução: <code>'+esc(dv.codigo)+'</code></div>':'')+
+    '</div>';
+  }
   h+='<div class="pb">'+band('Anexo 1 · Relação de mobiliário')+'<div class="pr-h">Relação de mobiliário — '+L.length+' salas, '+tot+' peças</div><div class="pr-salas">'+
     L.map(function(x){return '<div class="pr-sala"><div class="hd"><span>'+esc(x.s.nome)+'</span><span>'+pecasSala(x.s)+' peças</span></div><table>'+
       x.s.it.map(function(i){var alt=i.p==null?'item a mais na entrega':(i.q!==i.p?'padrão: '+i.p:'');return '<tr><td>'+esc(i.n)+(alt?' <span class="alt">('+alt+')</span>':'')+'</td><td>'+i.q+'</td></tr>';}).join('')+
@@ -427,7 +471,7 @@ function cliente(chave){
   var T=null,pad=null,aceite=false,enviando=false;
   var daEquipe=/[?&]equipe=1/.test(location.search);
   function foto(id,n){return '/api/publico/'+chave+'/fotos/'+n;}
-  function topo(){return '<header class="band"><div class="band-in"><img class="mark" src="'+LOGO+'" alt=""><div><div class="brand-t">Termo de Entrega</div><div class="brand-s">Camarins e salas de produção · Farmasi Arena</div></div><div class="sp"></div>'+
+  function topo(){return '<header class="band"><div class="band-in"><img class="mark" src="'+LOGO+'" alt=""><div><div class="brand-t">Termo de Entrega</div><div class="brand-s">Camarins, salas e chaves · Farmasi Arena</div></div><div class="sp"></div>'+
     (daEquipe?'<a class="btn-band" href="/#t='+(new URLSearchParams(location.search).get('t')||'')+'&a=3">'+I(IC.left)+'<span>Voltar ao sistema</span></a>':'')+'</div></header>';}
   function carrega(){
     api('GET','/api/publico/'+chave).then(function(j){T=j;desenha();}).catch(function(e){
@@ -445,6 +489,14 @@ function cliente(chave){
       '</details>';
     }).join('');
   }
+  function chavesHTML(){
+    var CH=chavesOn(T);if(!CH.length)return '';
+    var d=T.devolucao,fd=faltasDev(d);
+    return '<div class="card"><h3>'+I(IC.key)+'Chaves e controles'+(T.assinatura?(d?' · devolvidos':' · a devolver'):'')+'</h3>'+
+      (d?'<p class="lead" style="margin-bottom:8px">Devolução registrada em '+esc(hora(d.em))+'.'+(fd.length?' <span class="dev-falta">Não devolvido: '+esc(fd.map(faltaTxt).join(', '))+'.</span>':' Tudo devolvido.')+'</p>':
+        T.assinatura?'<p class="lead" style="margin-bottom:8px">Devolva aos produtores da arena ao fim da desmontagem.</p>':'')+
+      CH.map(function(x){return '<div class="it"><div class="nm">'+esc(x.k.nome)+'</div><div class="kq">'+qtdChave(x.k)+'</div></div>';}).join('')+'</div>';
+  }
   function desenha(){
     var c=T.campos,L=salasOn(T),tot=L.reduce(function(a,x){return a+pecasSala(x.s);},0);
     var h=topo()+'<main>';
@@ -454,7 +506,7 @@ function cliente(chave){
         '<button class="btn pri wide" type="button" id="baixar">'+I(IC.print)+'Baixar minha cópia em PDF</button>'+
         (daEquipe?'<a class="btn wide" style="margin-top:10px;text-decoration:none" href="/#t='+(new URLSearchParams(location.search).get('t')||'')+'&a=3">'+I(IC.left)+'Voltar ao sistema</a>':'')+
         '<div class="card termo" style="margin-top:14px"><h4>EVENTO: '+esc(c.evento)+'</h4>'+clausulas(T,true)+'</div>'+
-        '<div class="card"><h3>Salas entregues · '+L.length+' salas, '+tot+' peças</h3>'+salasHTML()+'</div>';
+        '<div class="card"><h3>Salas entregues · '+L.length+' salas, '+tot+' peças</h3>'+salasHTML()+'</div>'+chavesHTML();
       app.innerHTML=h+'</main>';
       $('#baixar').onclick=function(){imprimir(T,foto);};
       return;
@@ -473,9 +525,9 @@ function cliente(chave){
         '<div><small style="color:var(--muted)">Documento</small><div>'+esc(c.doc)+'</div></div>'+
       '</div></div>'+
       '<div class="card termo"><h4>TERMO DE ENTREGA E RESPONSABILIDADE · Nº '+esc(T.numero)+'</h4>'+clausulas(T,true)+'<p style="margin-top:14px;color:var(--muted)">Rio de Janeiro, '+esc(dataExt(c.dataTermo))+'</p></div>'+
-      '<div class="card"><h3>'+I(IC.home)+'Salas entregues · '+L.length+' salas, '+tot+' peças</h3><p class="lead" style="margin-bottom:8px">Toque numa sala para ver os móveis e as fotos da entrega.</p>'+salasHTML()+'</div>'+
-      '<div class="ident">Eu, <b>'+esc(c.resp)+'</b>, documento <b>'+esc(c.doc)+'</b>, responsável pelo evento <b>'+esc(c.evento)+'</b>, recebo as salas acima nas condições descritas.</div>'+
-      '<label class="aceite" id="aceiteBox"><input type="checkbox" id="aceite"><div><b>Li e concordo com este termo</b>, inclusive com a taxa de '+esc(T.taxa)+' de reorganização e a cobrança do custo de reposição de itens danificados.</div></label>'+
+      '<div class="card"><h3>'+I(IC.home)+'Salas entregues · '+L.length+' salas, '+tot+' peças</h3><p class="lead" style="margin-bottom:8px">Toque numa sala para ver os móveis e as fotos da entrega.</p>'+salasHTML()+'</div>'+chavesHTML()+
+      '<div class="ident">Eu, <b>'+esc(c.resp)+'</b>, documento <b>'+esc(c.doc)+'</b>, responsável pelo evento <b>'+esc(c.evento)+'</b>, recebo as salas'+(chavesOn(T).length?', as chaves e os controles':'')+' acima nas condições descritas.</div>'+
+      '<label class="aceite" id="aceiteBox"><input type="checkbox" id="aceite"><div><b>Li e concordo com este termo</b>'+esc(aceiteTexto(T).replace(/^Li e concordo com este termo/,''))+'</div></label>'+
       '<div class="card"><h3>'+I(IC.pen)+'Sua assinatura</h3>'+padHTML('Cli','Assine aqui com o dedo')+'<div class="sigbar"><small>'+esc(c.resp)+' · '+esc(c.doc)+'</small><button class="pill" type="button" id="limpar">'+I(IC.undo)+'Limpar</button></div></div>'+
       '</main><footer class="foot"><div class="foot-in"><div class="prog"><b id="pT">Leia e assine</b><small id="pS"></small></div><button class="btn pri" id="assinar" type="button">'+I(IC.pen)+'Assinar termo</button></div></footer>';
     app.innerHTML=h;
@@ -514,7 +566,7 @@ var E=null,tab=0,salvarT=null,salvando=false,pendente=false,padAre=null,poll=nul
 
 function entrar(){
   document.body.classList.remove('comrodape');
-  app.innerHTML='<div class="login"><img class="mark" src="'+LOGO+'" alt=""><h1>Termo de Entrega</h1><p>Camarins e salas de produção · Farmasi Arena</p>'+
+  app.innerHTML='<div class="login"><img class="mark" src="'+LOGO+'" alt=""><h1>Termo de Entrega</h1><p>Camarins, salas e chaves · Farmasi Arena</p>'+
     '<form id="fl"><input type="password" id="senha" placeholder="Senha da equipe" autocomplete="current-password" required><button class="btn pri" type="submit">Entrar</button><div class="erro" id="erro"></div></form></div>';
   $('#senha').focus();
   $('#fl').onsubmit=function(e){e.preventDefault();
@@ -522,7 +574,7 @@ function entrar(){
   };
 }
 function topoEquipe(extra){
-  return '<header class="band"><div class="band-in"><img class="mark" src="'+LOGO+'" alt=""><div><div class="brand-t">Termo de Entrega</div><div class="brand-s">Camarins e salas de produção · Farmasi Arena</div></div><div class="sp"></div>'+(extra||'')+'</div>';
+  return '<header class="band"><div class="band-in"><img class="mark" src="'+LOGO+'" alt=""><div><div class="brand-t">Termo de Entrega</div><div class="brand-s">Camarins, salas e chaves · Farmasi Arena</div></div><div class="sp"></div>'+(extra||'')+'</div>';
 }
 
 /* ---------- lista ---------- */
@@ -549,7 +601,8 @@ function desenhaLista(){
     '<div class="topo-lista"><input type="search" id="busca" placeholder="Buscar" aria-label="Buscar evento, responsável ou número" value="'+esc(BUSCA)+'"><button class="btn pri" id="novo" type="button">'+I(IC.plus)+'Novo termo</button></div>'+
     (L.length?'<div class="termos">'+L.map(function(r){
       var st=statusDe(r);
-      var tag=st==='ok'?'<span class="tag ok">'+I(IC.check)+'Assinado</span>':st==='wait'?'<span class="tag wait">'+I(IC.clock)+'Aguardando assinatura</span>':'<span class="tag prep">Em preparo</span>';
+      var tag=st==='ok'?(r.faltou?'<span class="tag no">'+I(IC.key)+'Faltou '+r.faltou+(r.faltou===1?' item':' itens')+'</span>':
+                         r.chaves&&!r.devolvidoEm?'<span class="tag wait">'+I(IC.key)+'Chaves a devolver</span>':'<span class="tag ok">'+I(IC.check)+'Assinado</span>'):st==='wait'?'<span class="tag wait">'+I(IC.clock)+'Aguardando assinatura</span>':'<span class="tag prep">Em preparo</span>';
       return '<button class="tc" type="button" data-abrir="'+r.id+'"><span class="ic '+st+'">'+I(st==='ok'?IC.fileok:IC.file)+'</span><span class="tx"><div class="ev">'+(esc(r.evento)||'<i style="color:var(--muted)">Sem nome</i>')+'</div>'+
         '<div class="mt">'+esc(r.numero)+(r.dataEvento?' · '+dataCurta(r.dataEvento):'')+(r.resp?' · '+esc(r.resp):'')+' · '+r.salas+' sala'+(r.salas===1?'':'s')+' · '+r.fotos+' foto'+(r.fotos===1?'':'s')+'</div></span>'+tag+'</button>';
     }).join('')+'</div>':'<div class="card vazio">'+I(IC.file)+'<div>'+(LISTA.length?'Nenhum termo com esse filtro.':'Nenhum termo ainda. Toque em <b>Novo termo</b> para começar.')+'</div></div>')+
@@ -614,7 +667,7 @@ function salvarJa(){
   clearTimeout(salvarT);
   if(salvando){pendente=true;return;}
   salvando=true;pendente=false;rodape();
-  api('PUT','/api/termos/'+E.id,{campos:E.campos,salas:E.salas,assArena:E.assArena}).then(function(j){
+  api('PUT','/api/termos/'+E.id,{campos:E.campos,salas:E.salas,chaves:E.chaves,assArena:E.assArena}).then(function(j){
     E.atualizadoEm=j.atualizadoEm;salvando=false;if(pendente)salvarJa();else rodape();
   }).catch(function(e){salvando=false;rodape();toast('Não salvou: '+e.message,5000);if(e.status===409)abrir(E.id,tab);});
 }
@@ -651,6 +704,15 @@ function paneSalas(){
     '<div class="stats"><div class="stat"><b>'+L.length+'</b><small>salas</small></div><div class="stat"><b>'+L.reduce(function(a,x){return a+pecasSala(x.s);},0)+'</b><small>peças</small></div><div class="stat"><b>'+aj+'</b><small>ajustes</small></div></div>'+
     (dis?'':'<div class="pills"><button class="pill" data-sel="todas" type="button">'+I(IC.check)+'Todas</button><button class="pill" data-sel="C" type="button">Só camarins</button><button class="pill" data-sel="T" type="button">Só produção</button><button class="pill" data-sel="nenhuma" type="button">'+I(IC.x)+'Limpar</button></div>')+
     '<div class="blk">Camarins</div><div class="rooms">'+cards('C')+'</div><div class="blk">Salas de produção</div><div class="rooms">'+cards('T')+'</div>'+
+    '<div class="blk">Chaves e controles</div><div class="card" style="padding:8px 18px">'+
+      (dis?'':'<p class="lead" style="margin:8px 0 4px;font-size:14px">A chave de cada sala escolhida já vem marcada. Marque também o que mais for entregue.</p>')+
+      Object.keys(E.chaves||{}).filter(function(id){return !dis||E.chaves[id].on;}).map(function(id){
+        var k=E.chaves[id];
+        return '<div class="krow"><button class="kbt" type="button" data-ch="'+id+'" aria-pressed="'+k.on+'"'+(dis?' disabled':'')+'><span class="ck">'+I(IC.check)+'</span><span class="nm">'+esc(k.nome)+'</span></button>'+
+          (k.on?(dis||k.tipo==='chave'?'<span class="kq">'+qtdChave(k)+'</span>':
+            '<div class="step"><button type="button" aria-label="Menos" data-chq="'+id+'|-1">'+I(IC.minus)+'</button><b>'+k.q+'</b><button type="button" aria-label="Mais" data-chq="'+id+'|1">'+I(IC.plus)+'</button></div>'):'')+'</div>';
+      }).join('')+(dis&&!chavesOn(E).length?'<p class="lead" style="margin:8px 0">Nenhuma chave ou controle entregue.</p>':'')+
+    '</div>'+
     '<div class="det">'+L.map(function(x){
       return '<div class="card"><h3>'+esc(x.s.nome)+'<small>'+pecasSala(x.s)+' peças</small></h3>'+
         x.s.it.map(function(i,k){
@@ -663,8 +725,11 @@ function paneSalas(){
       '</div>';
     }).join('')+'</div>';
   if(dis)return;
-  $$('[data-room]',p).forEach(function(b){b.onclick=function(){var s=E.salas[b.dataset.room];s.on=!s.on;agenda();paneSalas();rodape();};});
-  $$('[data-sel]',p).forEach(function(b){b.onclick=function(){var v=b.dataset.sel;ids.forEach(function(id){E.salas[id].on=v==='todas'||E.salas[id].g===v;});agenda();paneSalas();rodape();};});
+  function chaveDaSala(id){if(E.chaves&&E.chaves[id])E.chaves[id].on=E.salas[id].on;}
+  $$('[data-room]',p).forEach(function(b){b.onclick=function(){var s=E.salas[b.dataset.room];s.on=!s.on;chaveDaSala(b.dataset.room);agenda();paneSalas();rodape();};});
+  $$('[data-sel]',p).forEach(function(b){b.onclick=function(){var v=b.dataset.sel;ids.forEach(function(id){E.salas[id].on=v==='todas'||E.salas[id].g===v;chaveDaSala(id);});agenda();paneSalas();rodape();};});
+  $$('[data-ch]',p).forEach(function(b){b.onclick=function(){var k=E.chaves[b.dataset.ch];k.on=!k.on;agenda();paneSalas();};});
+  $$('[data-chq]',p).forEach(function(b){b.onclick=function(){var a=b.dataset.chq.split('|'),k=E.chaves[a[0]];k.q=Math.max(1,Math.min(20,k.q+(+a[1])));agenda();paneSalas();};});
   $$('[data-q]',p).forEach(function(b){b.onclick=function(){var a=b.dataset.q.split('|'),i=E.salas[a[0]].it[+a[1]];i.q=Math.max(0,Math.min(999,i.q+(+a[2])));agenda();paneSalas();};});
   $$('[data-del]',p).forEach(function(b){b.onclick=function(){var a=b.dataset.del.split('|');E.salas[a[0]].it.splice(+a[1],1);agenda();paneSalas();};});
   function add(id){var inp=$('[data-addn="'+id+'"]'),n=(inp.value||'').trim();if(!n){inp.focus();return;}E.salas[id].it.push({n:n.slice(0,80),q:1,p:null});agenda();paneSalas();var ni=$('[data-addn="'+id+'"]');if(ni)ni.focus();}
@@ -725,8 +790,9 @@ function paneAssinar(){
         '<button class="acao wa" type="button" id="aWaCopia"><span class="ic">'+I(IC.wa)+'</span><span class="tx2"><b>Mandar a cópia</b><small>Link da cópia assinada pelo WhatsApp</small></span></button>'+
         '<button class="acao" type="button" id="aCopiar"><span class="ic">'+I(IC.link)+'</span><span class="tx2"><b>Copiar link</b><small>Da cópia assinada do cliente</small></span></button>'+
       '</div>'+
-      '<div class="card" style="margin-top:14px"><h3>Assinaturas</h3><div class="grid"><div><img class="sigimg" src="'+as.img+'" alt=""><div style="text-align:center;border-top:1px solid var(--line);padding-top:6px"><b>'+esc(c.resp)+'</b><br><small style="color:var(--muted)">Responsável pelo evento</small></div></div>'+
+      '<div class="card" style="margin-top:14px" id="cardAss"><h3>Assinaturas</h3><div class="grid"><div><img class="sigimg" src="'+as.img+'" alt=""><div style="text-align:center;border-top:1px solid var(--line);padding-top:6px"><b>'+esc(c.resp)+'</b><br><small style="color:var(--muted)">Responsável pelo evento</small></div></div>'+
         '<div>'+(E.assArena?'<img class="sigimg" src="'+E.assArena+'" alt="">':'<div style="height:120px"></div>')+'<div style="text-align:center;border-top:1px solid var(--line);padding-top:6px"><b>'+(esc(c.arena)||'—')+'</b><br><small style="color:var(--muted)">Entregue por · Farmasi Arena</small></div></div></div></div>';
+    if(chavesOn(E).length){$('#cardAss').insertAdjacentHTML('beforebegin',devolucaoHTML());ligaDevolucao();}
     $('#aPdf').onclick=function(){$('#pdf').click();};
     $('#aWaCopia').onclick=function(){whats('Olá, '+(c.resp||'').split(' ')[0]+'! Segue a sua cópia do Termo de Entrega assinado ('+E.numero+', '+c.evento+'): '+linkCliente());};
     $('#aCopiar').onclick=function(){copiar(linkCliente());};
@@ -744,6 +810,7 @@ function paneAssinar(){
     '<div class="card"><h3>'+I(IC.pen)+'Assinatura de quem entrega (Farmasi Arena)</h3>'+padHTML('Are','Assine aqui')+'<div class="sigbar"><small>'+(esc(c.arena)||'Preencha o nome em Evento')+' · opcional, antes do cliente</small><button class="pill" type="button" id="limpaAre">'+I(IC.undo)+'Limpar</button></div></div>'+
     '<div class="card termo"><h4>O QUE O CLIENTE VAI LER</h4><h4>EVENTO: '+(esc(c.evento)||'—')+'</h4>'+clausulas(E,true)+
       '<h4>SALAS ENTREGUES</h4><p>'+(L.length?L.map(function(x){return esc(x.s.nome)+' ('+pecasSala(x.s)+')';}).join(', ')+' · '+tot+' peças · '+nFotos(E)+' fotos':'<i>Nenhuma sala escolhida.</i>')+'</p>'+
+      '<h4>CHAVES E CONTROLES</h4><p>'+(chavesOn(E).length?esc(listaChaves(E)):'<i>Nenhum.</i>')+'</p>'+
       '<p style="margin-top:14px;color:var(--muted)">Rio de Janeiro, '+esc(dataExt(c.dataTermo))+'</p></div>';
   padAre=Pad($('#cAre'),$('#wAre'),E.assArena,function(v){E.assArena=v;agenda();});
   $('#limpaAre').onclick=function(){padAre.limpa();};
@@ -760,6 +827,65 @@ function paneAssinar(){
   $('#aLink').onclick=function(){antes().then(liberar).then(function(){copiar(linkCliente());paneAssinar();espera();}).catch(erroGeral);};
   if(E.linkEm)espera();
 }
+/* ---------- devolução das chaves e controles ---------- */
+var DEV=null,padDev=null;
+function devolucaoHTML(){
+  var d=E.devolucao;
+  if(d){
+    var fd=faltasDev(d);
+    return '<div class="'+(fd.length?'warnbox':'okbox')+'" style="margin-top:14px"><h3>'+I(IC.key)+(fd.length?'Devolução com falta':'Chaves e controles devolvidos')+'</h3>'+
+      '<p>Devolvido por <b>'+esc(d.nome)+'</b>'+(d.doc?' ('+esc(d.doc)+')':'')+' em '+esc(hora(d.em))+(d.recebeu?', recebido por '+esc(d.recebeu):'')+'.</p>'+
+      (fd.length?'<p><b>Não devolvido: '+esc(fd.map(faltaTxt).join(', '))+'.</b> Pela cláusula 4, o cliente arca com o custo.</p>':'<p>Tudo voltou.</p>')+
+      '<div class="codigo" title="Código de conferência da devolução">'+esc(codFmt(d.codigo))+'</div>'+
+      (d.confere?'':'<p style="margin-top:8px;font-size:13px;color:var(--brand)">Atenção: a devolução não bate com o código.</p>')+'</div>';
+  }
+  if(!DEV||DEV.id!==E.id){
+    DEV={id:E.id,itens:{},nome:E.campos.resp||'',doc:E.campos.doc||'',recebeu:E.campos.arena||'',conf:false};
+    chavesOn(E).forEach(function(x){DEV.itens[x.id]=0;});
+  }
+  function f(k,rot){return '<label class="f"><span>'+rot+'</span><input type="text" data-dk="'+k+'" value="'+esc(DEV[k])+'" autocomplete="off"></label>';}
+  return '<div class="card" style="margin-top:14px" id="devCard"><h3>'+I(IC.key)+'Devolução das chaves e controles</h3>'+
+    '<p class="lead" style="margin-bottom:10px">No fim da desmontagem, conte o que voltou. Quem devolve assina aqui, neste aparelho.</p>'+
+    '<div class="pills"><button class="pill" type="button" id="devTudo">'+I(IC.check)+'Voltou tudo</button></div>'+
+    '<div id="devRows"></div>'+
+    '<div class="grid" style="margin-top:14px">'+f('nome','Quem devolve <b>*</b>')+f('doc','Documento (CPF ou RG)')+'<div class="full">'+f('recebeu','Recebido por (Farmasi Arena)')+'</div></div>'+
+    '<div style="margin-top:14px">'+padHTML('Dev','Assinatura de quem devolve')+'<div class="sigbar"><small id="devQuem">'+esc(DEV.nome)+'</small><button class="pill" type="button" id="limpaDev">'+I(IC.undo)+'Limpar</button></div></div>'+
+    '<p id="devRes" style="margin:14px 0 10px;font-weight:600"></p>'+
+    '<button class="btn pri wide" type="button" id="devOk">'+I(IC.key)+'Registrar devolução</button></div>';
+}
+function ligaDevolucao(){
+  if(E.devolucao)return;
+  var CH=chavesOn(E);
+  function linhas(){
+    $('#devRows').innerHTML=CH.map(function(x){
+      var v=DEV.itens[x.id],f=v<x.k.q;
+      return '<div class="krow"><div class="nm" style="flex:1;min-width:0">'+esc(x.k.nome)+'<br><small class="'+(f?'dev-falta':'kq')+'">'+(f?'faltam '+(x.k.q-v)+' de '+x.k.q:'voltou')+'</small></div>'+
+        '<div class="step"><button type="button" aria-label="Menos" data-dq="'+x.id+'|-1">'+I(IC.minus)+'</button><b>'+v+'</b><button type="button" aria-label="Mais" data-dq="'+x.id+'|1">'+I(IC.plus)+'</button></div></div>';
+    }).join('');
+    var fd=CH.filter(function(x){return DEV.itens[x.id]<x.k.q;});
+    var r=$('#devRes');r.className=fd.length?'dev-falta':'';r.style.color=fd.length?'':'var(--ok)';
+    r.textContent=fd.length?'Ainda não voltou: '+fd.map(function(x){return (x.k.q-DEV.itens[x.id])+'x '+x.k.nome;}).join(', '):'Tudo voltou.';
+    DEV.conf=false;$('#devOk').lastChild.textContent='Registrar devolução';
+    $$('[data-dq]').forEach(function(b){b.onclick=function(){var a=b.dataset.dq.split('|'),k=E.chaves[a[0]];DEV.itens[a[0]]=Math.max(0,Math.min(k.q,DEV.itens[a[0]]+(+a[1])));linhas();};});
+  }
+  linhas();
+  padDev=Pad($('#cDev'),$('#wDev'),null,null);
+  $('#limpaDev').onclick=function(){padDev.limpa();};
+  $('#devTudo').onclick=function(){CH.forEach(function(x){DEV.itens[x.id]=x.k.q;});linhas();};
+  $$('[data-dk]').forEach(function(el){el.oninput=function(){DEV[el.dataset.dk]=el.value;el.classList.remove('bad');if(el.dataset.dk==='nome')$('#devQuem').textContent=el.value;};});
+  $('#devOk').onclick=function(){
+    var b=$('#devOk');
+    if(!DEV.nome.trim()){var n=$('[data-dk=nome]');n.classList.add('bad');n.focus();toast('Preencha o nome de quem devolve');return;}
+    if(!padDev.valor()){toast('Falta a assinatura de quem devolve');$('#wDev').scrollIntoView({behavior:'smooth',block:'center'});return;}
+    var fd=CH.filter(function(x){return DEV.itens[x.id]<x.k.q;});
+    if(fd.length&&!DEV.conf){DEV.conf=true;b.lastChild.textContent='Registrar mesmo com falta';toast('Ainda falta item. Toque de novo para registrar assim; depois não muda mais.',5000);return;}
+    b.disabled=true;
+    api('POST','/api/termos/'+E.id+'/devolucao',{itens:DEV.itens,nome:DEV.nome,doc:DEV.doc,recebeu:DEV.recebeu,img:padDev.valor()}).then(function(t){
+      E=t;DEV=null;toast(faltasDev(t.devolucao).length?'Devolução registrada com falta':'Devolução registrada');vai(3);
+    }).catch(function(e){b.disabled=false;erroGeral(e);});
+  };
+}
+
 function espera(){
   pararPoll();
   poll=setInterval(function(){

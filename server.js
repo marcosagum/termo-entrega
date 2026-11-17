@@ -1,5 +1,6 @@
 // Servidor do Termo de Entrega (Farmasi Arena): termo de entrega e responsabilidade dos
-// camarins e salas de produção, assinado pelo cliente na tela.
+// camarins, salas de produção, chaves e controles, assinado pelo cliente na tela.
+// A devolução das chaves e controles é registrada depois, com a assinatura de quem devolve.
 // Sem dependências: Node 20 puro. Os dados ficam em DADOS_DIR (no Coolify, um volume):
 //   termos.json         todos os termos
 //   fotos/<termo>/...   fotos da entrega
@@ -30,7 +31,15 @@ fs.mkdirSync(FOTOS, { recursive: true });
 let dados = fs.existsSync(ARQ) ? JSON.parse(fs.readFileSync(ARQ, 'utf8')) : { seq: {}, termos: {} };
 dados.seq = dados.seq || {};
 dados.termos = dados.termos || {};
+// termos criados antes das chaves ganham a lista, toda desmarcada (não muda o que já foi assinado)
+Object.values(dados.termos).forEach(t => { if (!t.chaves) t.chaves = chavesPadrao(); if (t.devolucao === undefined) t.devolucao = null; });
 salvar();
+
+function chavesPadrao() {
+  const out = {};
+  PADRAO.chaves.forEach(k => { out[k.id] = { nome: k.nome, tipo: k.tipo, q: k.q, on: false }; });
+  return out;
+}
 
 function salvar() {
   const tmp = ARQ + '.tmp';
@@ -92,10 +101,12 @@ function novoTermo() {
     taxa: PADRAO.taxa,
     campos: { dataTermo: hoje() },
     salas,
+    chaves: chavesPadrao(),
     fotos: {},
     assArena: null,
     linkEm: null,
     assinatura: null,
+    devolucao: null,
   };
 }
 
@@ -122,6 +133,17 @@ function validarSalas(salas, atual) {
   }
   return null;
 }
+function validarChaves(chaves, atual) {
+  if (!chaves || typeof chaves !== 'object' || Array.isArray(chaves)) return 'Chaves inválidas';
+  const ids = Object.keys(chaves);
+  if (ids.length !== Object.keys(atual).length || ids.some(id => !atual[id])) return 'Chaves inválidas';
+  for (const id of ids) {
+    const k = chaves[id];
+    if (!k || typeof k.on !== 'boolean' || !Number.isInteger(k.q) || k.q < 1 || k.q > 20) return 'Quantidade inválida: ' + atual[id].nome;
+  }
+  return null;
+}
+const chavesOn = t => Object.entries(t.chaves || {}).filter(([, k]) => k.on).map(([id, k]) => ({ id, ...k }));
 function validarAssinatura(img) {
   return typeof img === 'string' && img.startsWith('data:image/png;base64,') && img.length < 600 * 1024;
 }
@@ -140,8 +162,19 @@ function faltando(t) {
 function conteudo(t) {
   const salas = Object.entries(t.salas).filter(([, s]) => s.on).map(([id, s]) => ({ id, nome: s.nome, it: s.it.map(x => [x.n, x.q]) }));
   const fotos = Object.entries(t.fotos).flatMap(([sala, lista]) => lista.map(f => ({ sala, hash: f.hash })));
-  return { numero: t.numero, taxa: t.taxa, campos: t.campos, salas, fotos };
+  const out = { numero: t.numero, taxa: t.taxa, campos: t.campos, salas, fotos };
+  const ch = chavesOn(t);
+  if (ch.length) out.chaves = ch.map(k => [k.id, k.nome, k.q]); // só entra quando há chaves (termos antigos não mudam)
+  return out;
 }
+// A devolução tem o seu próprio código, ligado ao código da assinatura da entrega.
+function codigoDev(t, d) {
+  return crypto.createHash('sha256').update(JSON.stringify({
+    numero: t.numero, entrega: t.assinatura.codigo, itens: d.itens, nome: d.nome, doc: d.doc, recebeu: d.recebeu,
+    img: crypto.createHash('sha256').update(d.img).digest('hex'), em: d.em,
+  })).digest('hex');
+}
+const faltouDev = d => d ? d.itens.filter(x => x.dev < x.q).length : 0;
 function codigoDe(t, assinatura) {
   return crypto.createHash('sha256').update(JSON.stringify({
     ...conteudo(t),
@@ -159,6 +192,9 @@ function resumo(t) {
     assinadoEm: t.assinatura ? t.assinatura.em : null,
     salas: on.length, pecas: on.reduce((a, s) => a + s.it.reduce((b, x) => b + x.q, 0), 0),
     fotos: Object.values(t.fotos).reduce((a, l) => a + l.length, 0),
+    chaves: chavesOn(t).length,
+    devolvidoEm: t.devolucao ? t.devolucao.em : null,
+    faltou: faltouDev(t.devolucao),
   };
 }
 // O que o cliente vê: só o termo dele, sem a chave, sem dados internos.
@@ -167,16 +203,21 @@ function publico(t) {
   Object.entries(t.salas).forEach(([id, s]) => { if (s.on) salas[id] = s; });
   const fotos = {};
   Object.entries(t.fotos).forEach(([id, l]) => { if (salas[id] && l.length) fotos[id] = l.map(f => f.nome); });
+  const chaves = {};
+  chavesOn(t).forEach(k => { chaves[k.id] = { nome: k.nome, tipo: k.tipo, q: k.q, on: true }; });
+  const d = t.devolucao;
   return {
-    numero: t.numero, versao: t.atualizadoEm, taxa: t.taxa, campos: t.campos, salas, fotos, assArena: t.assArena,
+    numero: t.numero, versao: t.atualizadoEm, taxa: t.taxa, campos: t.campos, salas, chaves, fotos, assArena: t.assArena,
     faltando: faltando(t),
     assinatura: t.assinatura ? { img: t.assinatura.img, em: t.assinatura.em, codigo: t.assinatura.codigo } : null,
+    devolucao: d ? { itens: d.itens, nome: d.nome, doc: d.doc, recebeu: d.recebeu, img: d.img, em: d.em, codigo: d.codigo } : null,
   };
 }
 function completo(t) {
   const out = JSON.parse(JSON.stringify(t));
   Object.keys(out.fotos).forEach(id => { out.fotos[id] = out.fotos[id].map(f => f.nome); });
   if (out.assinatura) out.assinatura.confere = codigoDe(t, t.assinatura) === t.assinatura.codigo;
+  if (out.devolucao) out.devolucao.confere = codigoDev(t, t.devolucao) === t.devolucao.codigo;
   return out;
 }
 function apagarFotos(id) {
@@ -288,7 +329,7 @@ const servidor = http.createServer(async (req, res) => {
       return json(res, 200, completo(t));
     }
 
-    const mt = p.match(/^\/api\/termos\/(t[a-z0-9]{1,40})(?:\/(fotos|link)(?:\/([A-Za-z0-9]{1,6})(?:\/([a-z0-9]+\.jpg))?)?)?$/);
+    const mt = p.match(/^\/api\/termos\/(t[a-z0-9]{1,40})(?:\/(fotos|link|devolucao)(?:\/([A-Za-z0-9]{1,6})(?:\/([a-z0-9]+\.jpg))?)?)?$/);
     if (mt) {
       const t = dados.termos[mt[1]];
       if (!t) return json(res, 404, { erro: 'Termo não encontrado' });
@@ -309,15 +350,44 @@ const servidor = http.createServer(async (req, res) => {
           if (!corpo || typeof corpo !== 'object') return json(res, 400, { erro: 'Pedido inválido' });
           if (corpo.campos !== undefined) { const e = validarCampos(corpo.campos); if (e) return json(res, 400, { erro: e }); }
           if (corpo.salas !== undefined) { const e = validarSalas(corpo.salas, t.salas); if (e) return json(res, 400, { erro: e }); }
+          if (corpo.chaves !== undefined) { const e = validarChaves(corpo.chaves, t.chaves); if (e) return json(res, 400, { erro: e }); }
           if (corpo.assArena !== undefined && corpo.assArena !== null && !validarAssinatura(corpo.assArena)) return json(res, 400, { erro: 'Assinatura inválida' });
           if (corpo.campos !== undefined) t.campos = corpo.campos;
           if (corpo.salas !== undefined) Object.entries(corpo.salas).forEach(([sid, s]) => { t.salas[sid].on = s.on; t.salas[sid].it = s.it.map(x => ({ n: x.n.trim(), q: x.q, p: x.p })); });
+          if (corpo.chaves !== undefined) Object.entries(corpo.chaves).forEach(([kid, k]) => { t.chaves[kid].on = k.on; t.chaves[kid].q = k.q; });
           if (corpo.assArena !== undefined) t.assArena = corpo.assArena;
           t.atualizadoEm = new Date().toISOString();
           salvar();
           return json(res, 200, { atualizadoEm: t.atualizadoEm });
         }
         return json(res, 405, { erro: 'Método não aceito' });
+      }
+
+      // Devolução das chaves e controles: no fim da desmontagem, quem devolve assina na tela da equipe.
+      if (sub === 'devolucao' && !sala && req.method === 'POST') {
+        if (!t.assinatura) return json(res, 409, { erro: 'O termo ainda não foi assinado na entrega' });
+        if (t.devolucao) return json(res, 409, { erro: 'A devolução já foi registrada' });
+        const entregues = chavesOn(t);
+        if (!entregues.length) return json(res, 400, { erro: 'Este termo não tem chaves nem controles' });
+        const corpo = await lerCorpo(req, 700 * 1024);
+        if (!corpo || typeof corpo.itens !== 'object' || !corpo.itens) return json(res, 400, { erro: 'Pedido inválido' });
+        for (const k of entregues) {
+          const v = corpo.itens[k.id];
+          if (!Number.isInteger(v) || v < 0 || v > k.q) return json(res, 400, { erro: 'Quantidade devolvida inválida: ' + k.nome });
+        }
+        if (Object.keys(corpo.itens).length !== entregues.length) return json(res, 400, { erro: 'Pedido inválido' });
+        if (!cheio(corpo.nome) || !texto(corpo.nome, 120)) return json(res, 400, { erro: 'Preencha o nome de quem devolve' });
+        if (!texto(corpo.doc || '', 60) || !texto(corpo.recebeu || '', 120)) return json(res, 400, { erro: 'Dados longos demais' });
+        if (!validarAssinatura(corpo.img)) return json(res, 400, { erro: 'Falta a assinatura de quem devolve' });
+        const d = {
+          itens: entregues.map(k => ({ id: k.id, nome: k.nome, q: k.q, dev: corpo.itens[k.id] })),
+          nome: corpo.nome.trim(), doc: (corpo.doc || '').trim(), recebeu: (corpo.recebeu || '').trim(),
+          img: corpo.img, em: new Date().toISOString(), ip: ipDe(req), aparelho: String(req.headers['user-agent'] || '').slice(0, 300),
+        };
+        d.codigo = codigoDev(t, d);
+        t.devolucao = d;
+        salvar();
+        return json(res, 200, completo(t));
       }
 
       if (sub === 'link' && req.method === 'POST') {
